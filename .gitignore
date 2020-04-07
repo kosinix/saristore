@@ -102,3 +102,13 @@ dist
 
 # TernJS port file
 .tern-port
+
+
+node_modules/*
+data/upload/*
+data/log/*
+data/sessions.db
+package-lock.json
+.vscode/*
+credentials/*
+credentials*
