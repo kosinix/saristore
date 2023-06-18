@@ -28,7 +28,7 @@ var config = {
             width: { min: 320 },
             height: { min: 240 },
             aspectRatio: { min: 1, max: 100 },
-            facingMode: "user" // or user
+            facingMode: "environment" // or user
         },
         target: document.querySelector('#interactive'),
     },
@@ -113,7 +113,26 @@ $('#modal-scan').on('hide.bs.modal', function (e) {
         Quagga.stop();
     }
 })
+function changeCam(){
+    if (Quagga) {
+        $('#interactive').html('')
+        Quagga.stop();
+    }
+    if(config.inputStream.constraints.facingMode==='user'){
+        config.inputStream.constraints.facingMode='environment'
+    } else {
+        config.inputStream.constraints.facingMode='user'
 
+    }
+    Quagga.init(config, function (err) {
+        if (err) {
+            console.log(err);
+            alert(err.message)
+            return;
+        }
+        Quagga.start();
+    });
+}
 vApp = new Vue({
     el: '#vApp',
     delimiters: ["${", "}"],
@@ -259,4 +278,4 @@ vApp = new Vue({
             });
         }
     }
-}); 0
+});
