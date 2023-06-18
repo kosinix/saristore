@@ -115,7 +115,7 @@
                             </tr>
                             <tr v-for="(item, index) in items">
                                 <td>${index + 1}</td>
-                                <td>${item.name}</td>
+                                <td>${item.name} <em>(${item.size} ${item.unit})</em></td>
                                 <td>${item.price|currency}</td>
                                 <td>${item.stock}</td>
                                 <td><a v-if="item.photo" @click.prevent="openTab(item.photo)" :href="item.photo"><img width="50" v-if="item.photo" :src="item.photo" alt=""></a></td>
