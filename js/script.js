@@ -84,7 +84,7 @@ Quagga.onDetected(function (result) {
     code = code + ''
     if (candidates[code]) {
         if (candidates[code] >= threshold) {
-            vApp.barcode = code // vue
+            vApp.newItem.barcode = code // vue
             Quagga.stop()
 
             var drawingCtx = Quagga.canvas.ctx.overlay
