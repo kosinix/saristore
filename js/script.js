@@ -104,7 +104,7 @@ Quagga.onDetected(function (result) {
     } else {
         candidates[code] = 1
     }
-    console.log(candidates)
+    // console.log(candidates)
 });
 
 $('#modal-scan').on('hide.bs.modal', function (e) {
@@ -126,7 +126,7 @@ function changeCam(){
     }
     Quagga.init(config, function (err) {
         if (err) {
-            console.log(err);
+            console.error(err);
             alert(err.message)
             return;
         }
@@ -137,11 +137,12 @@ vApp = new Vue({
     el: '#vApp',
     delimiters: ["${", "}"],
     mixins: [
+        window.vueFiltersMixin,
         window.vuelidate.validationMixin,
         window.vuelidateExtendMixin,
     ],
     data: {
-        page: 1,
+        page: 2,
         pending: false,
         error: '',
         
@@ -155,17 +156,43 @@ vApp = new Vue({
             description: '',
             photo: '',
         },
+        editedItem: {
+            index: ''
+        },
 
         items: []
     },
     validations: {
 
     },
+    watch: {
+        page: function (newPage, oldPage) {
+            let me = this;
+            
+            if(newPage === 0) {
+                // history.pushState({page:0},'','#home')
+            } else if(newPage === 1) {
+
+                
+
+            } else if(newPage === 2) {
+                // history.pushState({page:2},'','#store')
+
+
+            } else if(newPage === 3) {
+               
+
+            }
+        }
+    },
     mounted: function () {
         const me = this
         localforage.getItem('items').then((items) => {
             me.items = items || []
         })
+        if(window.location.hash==='#home'){
+            me.page = 0
+        }
     },
     methods: {
         clear: function(group){
@@ -184,7 +211,7 @@ vApp = new Vue({
         onBarcode: function () {
             Quagga.init(config, function (err) {
                 if (err) {
-                    console.log(err);
+                    console.error(err);
                     alert(err.message)
                     return;
                 }
@@ -228,7 +255,6 @@ vApp = new Vue({
                             let mime = base64Data.split(';')[0].replace('data:', '')
                             if (!mime) throw new Error('Not a valid photo.')
                             if (['image/jpeg', 'image/png'].includes(mime)) {
-                                console.log(propPath)
                                 lodash.set(me, propPath, base64Data) // data URL base64 encoded
                             } else {
                                 throw new Error('File type not allowed.')
@@ -248,6 +274,13 @@ vApp = new Vue({
             me.storeUpdate()
 
         },
+        editItem: function (index) {
+            const me = this
+            let item = me.items[index]
+            me.newItem = item
+            me.editedItem.index = index
+            me.page = 3
+        },
         storeUpdate: function (cb=()=>{}) {
             const me = this
 
@@ -257,23 +290,35 @@ vApp = new Vue({
                 cb(value)
             }).catch(function (err) {
                 // This code runs if there were any errors
-                console.log(err);
+                console.error(err);
                 cb(null, err)
             });
         },
 
         onSubmit: function () {
-            var me = this;
+            const me = this;
 
             me.$nextTick(function () {
-                const me = this;
-                
                 me.items.push(JSON.parse(JSON.stringify(me.newItem)))
                 me.storeUpdate(function(value, error){
                     if(error){
                         return false
                     }
                     me.clear('newItem')
+                })
+            });
+        },
+        onEdit: function (index) {
+            const me = this;
+
+            me.$nextTick(function () {
+                me.$set(me.items, index, JSON.parse(JSON.stringify(me.newItem)))
+                me.storeUpdate(function(value, error){
+                    if(error){
+                        return false
+                    }
+                    me.clear('newItem')
+                    me.page = 2
                 })
             });
         }
