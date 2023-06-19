@@ -1,6 +1,11 @@
-localforage.config({
-    name: 'saristore'
+
+const db = new Dexie("SariStore")
+db.version(1).stores({
+    items: '++id, barcode, name, price, stock, size, unit, description'
 });
+db.open().catch(function (e) {
+    console.error("Open failed: " + e.stack);
+})
 
 function resizeDimensions(width, height, newWidth, newHeight) {
     let ratio = width / height
@@ -113,15 +118,15 @@ $('#modal-scan').on('hide.bs.modal', function (e) {
         Quagga.stop();
     }
 })
-function changeCam(){
+function changeCam() {
     if (Quagga) {
         $('#interactive').html('')
         Quagga.stop();
     }
-    if(config.inputStream.constraints.facingMode==='user'){
-        config.inputStream.constraints.facingMode='environment'
+    if (config.inputStream.constraints.facingMode === 'user') {
+        config.inputStream.constraints.facingMode = 'environment'
     } else {
-        config.inputStream.constraints.facingMode='user'
+        config.inputStream.constraints.facingMode = 'user'
 
     }
     Quagga.init(config, function (err) {
@@ -145,8 +150,9 @@ vApp = new Vue({
         page: 2,
         pending: false,
         error: '',
-        
+
         newItem: {
+            id: '',
             barcode: '',
             name: '',
             price: 0,
@@ -168,43 +174,46 @@ vApp = new Vue({
     watch: {
         page: function (newPage, oldPage) {
             let me = this;
-            
-            if(newPage === 0) {
+
+            if (newPage === 0) {
                 // history.pushState({page:0},'','#home')
-            } else if(newPage === 1) {
+            } else if (newPage === 1) {
 
-                
 
-            } else if(newPage === 2) {
+
+            } else if (newPage === 2) {
                 // history.pushState({page:2},'','#store')
 
 
-            } else if(newPage === 3) {
-               
+            } else if (newPage === 3) {
+
 
             }
         }
     },
     mounted: function () {
         const me = this
-        localforage.getItem('items').then((items) => {
+
+        db.items.toArray().then((items) => {
             me.items = items || []
+        }).catch((err) => {
+            console.error(err)
         })
-        if(window.location.hash==='#home'){
+        if (window.location.hash === '#home') {
             me.page = 0
         }
     },
     methods: {
-        clear: function(group){
-            for(let name in this[group]){
+        clear: function (group) {
+            for (let name in this[group]) {
                 this[group][name] = ''
             }
         },
-        openTab: function(data){
+        openTab: function (data) {
             let w = window.open('about:blank');
             let image = new Image();
             image.src = data;
-            setTimeout(function(){
+            setTimeout(function () {
                 w.document.write(image.outerHTML);
             }, 0);
         },
@@ -270,8 +279,13 @@ vApp = new Vue({
         },
         deleteItem: function (index) {
             const me = this
-            me.$delete(me.items, index)
-            me.storeUpdate()
+            db.items.delete(me.items[index].id).then(() => {
+                me.$delete(me.items, index)
+
+            }).catch(err => {
+                console.error(err)
+            })
+
 
         },
         editItem: function (index) {
@@ -281,30 +295,15 @@ vApp = new Vue({
             me.editedItem.index = index
             me.page = 3
         },
-        storeUpdate: function (cb=()=>{}) {
-            const me = this
-
-            localforage.setItem('items', me.items).then(function (value) {
-                // Do other things once the value has been saved.
-                // console.log(value);
-                cb(value)
-            }).catch(function (err) {
-                // This code runs if there were any errors
-                console.error(err);
-                cb(null, err)
-            });
-        },
-
         onSubmit: function () {
             const me = this;
 
             me.$nextTick(function () {
                 me.items.push(JSON.parse(JSON.stringify(me.newItem)))
-                me.storeUpdate(function(value, error){
-                    if(error){
-                        return false
-                    }
+                db.items.add(JSON.parse(JSON.stringify(me.newItem))).then(() => {
                     me.clear('newItem')
+                }).catch(err => {
+                    console.error(err)
                 })
             });
         },
@@ -313,13 +312,16 @@ vApp = new Vue({
 
             me.$nextTick(function () {
                 me.$set(me.items, index, JSON.parse(JSON.stringify(me.newItem)))
-                me.storeUpdate(function(value, error){
-                    if(error){
-                        return false
+
+                db.items.update(me.newItem.id, JSON.parse(JSON.stringify(me.newItem))).then(function (updated) {
+                    if (updated){
+                        console.log('updated')
+                    } else {
+
                     }
                     me.clear('newItem')
                     me.page = 2
-                })
+                });
             });
         }
     }
