@@ -248,6 +248,32 @@
                         <a href="#home"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" class="mr-3"><title>Back</title><path fill="white" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></a>
                         <h1 class="h6 mb-0">Calculator</h1>
                     </div>
+
+                    <div class="d-flex justify-content-center">
+                        <div class="calculator">
+                            <div class="display">
+                                <input v-model="calculator.display" type="text" readonly class="form-control">
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button v-for="n in [7,8,9]" @click="calculator.display += `${n}`" type="button" class="btn btn-light">${n}</button>
+                                <button @click="calc(calculator.display, 'x')" type="button" class="btn btn-light">X</button>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button v-for="n in [4,5,6]" @click="calculator.display += `${n}`" type="button" class="btn btn-light">${n}</button>
+                                <button @click="calc(calculator.display, '-')" type="button" class="btn btn-light">-</button>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button v-for="n in [1,2,3]" @click="calculator.display += `${n}`" type="button" class="btn btn-light">${n}</button>
+                                <button @click="calc(calculator.display, '+')" type="button" class="btn btn-light">+</button>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button @click="calcClear()" type="button" class="btn btn-light">C</button>
+                                <button @click="calculator.display += `0`" type="button" class="btn btn-light">0</button>
+                                <button @click="calculator.display += `.`" type="button" class="btn btn-light">.</button>
+                                <button @click="calcOp(calculator.display)" type="button" class="btn btn-primary">=</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- Scanner -->
                 <div v-if="page=='#scan'">

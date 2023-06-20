@@ -185,7 +185,12 @@ vApp = new Vue({
         searchQuery: '',
         searchResults: [],
         cart: [],
-        items: []
+        items: [],
+        calculator: {
+            x1: null,
+            display: '',
+            op:''
+        }
     },
     watch: {
         page: function (newPage, oldPage) {
@@ -215,7 +220,7 @@ vApp = new Vue({
         })
 
         // TODO: change to home
-        me.page = window.location.hash || '#scan'
+        me.page = window.location.hash || '#calc'
     },
     computed: {
         cartCount: function () {
@@ -223,7 +228,7 @@ vApp = new Vue({
 
             return me.cart.reduce((a, b) => {
                 let qty = (!b.qty) ? 0 : parseInt(b.qty)
-                
+
                 return a + qty
             }, 0)
         },
@@ -239,6 +244,32 @@ vApp = new Vue({
         }
     },
     methods: {
+        calc: function (val, op) {
+            const me = this;
+
+            if (!me.calculator.x1) {
+                me.calculator.x1 = parseFloat(val)
+                me.calculator.display = ''
+                me.calculator.op = op
+            }
+        },
+        calcOp: function (val) {
+            const me = this;
+
+            if (me.calculator.op === '+') {
+                me.calculator.display = me.calculator.x1 + parseFloat(val)
+            } else if (me.calculator.op === '-') {
+                me.calculator.display = me.calculator.x1 - parseFloat(val)
+            } else if (me.calculator.op === 'x') {
+                me.calculator.display = me.calculator.x1 * parseFloat(val)
+            }
+        },
+        calcClear: function () {
+            const me = this;
+            me.calculator.x1 = null
+            me.calculator.op = ''
+            me.calculator.display = ''
+        },
         addToCart: function (id) {
             const me = this;
 
@@ -263,7 +294,7 @@ vApp = new Vue({
                 })
             }
         },
-        deleteCartItem: function(index) {
+        deleteCartItem: function (index) {
             const me = this
             me.$delete(me.cart, index)
         },
