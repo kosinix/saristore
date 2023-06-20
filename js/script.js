@@ -235,14 +235,14 @@ vApp = new Vue({
             const me = this;
 
             if(!isNaN(s.slice(0, 6))){
-                db.items.where('barcode').startsWithAnyOfIgnoreCase(s).toArray().then((items) => {
+                db.items.where('barcode').startsWithAnyOfIgnoreCase(s).limit(10).toArray().then((items) => {
                     // console.log(items)
                     me.searchResults = items
                 }).catch((err) => {
                     console.error(err)
                 })
             } else {
-                db.items.where('name').startsWithAnyOfIgnoreCase(s).toArray().then((items) => {
+                db.items.where('name').startsWithAnyOfIgnoreCase(s).limit(10).toArray().then((items) => {
                     // console.log(items)
                     me.searchResults = items
                 }).catch((err) => {
