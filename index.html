@@ -242,89 +242,13 @@
                 </div>
                 <div v-if="page=='calc'">
                     <div class="back d-flex align-items-center mb-4">
-                        <a href="#" @click="page=0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" class="mr-3"><title>Back</title><path fill="white" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></a>
+                        <a href="#home"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" class="mr-3"><title>Back</title><path fill="white" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></a>
                         <h1 class="h6 mb-0">Calculator</h1>
                     </div>
-                    
-                    <form ref="formAdd" v-on:submit.prevent="onEdit(editedItem.index)" action="" method="POST" class="form-default">
-                        <div class="form-group">
-                            <label for="barcode">Barcode <em class="text-danger">*</em></label>
-                            <div class="d-flex">
-                                <input name="barcode" id="barcode" v-model="newItem.barcode" type="text" class="form-control">
-                                <button @click="onBarcode" type="button" class="btn btn-light p-0 pl-2 pr-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" viewBox="0 0 24 24"><path d="M4,6H6V18H4V6M7,6H8V18H7V6M9,6H12V18H9V6M13,6H14V18H13V6M16,6H18V18H16V6M19,6H20V18H19V6M2,4V8H0V4A2,2 0 0,1 2,2H6V4H2M22,2A2,2 0 0,1 24,4V8H22V4H18V2H22M2,16V20H6V22H2A2,2 0 0,1 0,20V16H2M22,20V16H24V20A2,2 0 0,1 22,22H18V20H22Z" /></svg>
-                                </button>
-                            </div>
-                            <small class="invalid-feedback">${getError('barcode')}</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="name">Name <em class="text-danger">*</em></label>
-                            <div>
-                                <input name="name" id="name" v-model="newItem.name" type="text" class="form-control">
-                                <small class="invalid-feedback">${getError('name')}</small>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <div class="col-6">
-                                    <label for="price">Price <em class="text-danger">*</em></label>
-                                    <div>
-                                        <input name="price" id="price" v-model="newItem.price" type="text" class="form-control">
-                                        <small class="invalid-feedback">${getError('price')}</small>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <label for="stock">Stock <em class="text-danger">*</em></label>
-                                    <div>
-                                        <input name="stock" id="stock" v-model="newItem.stock" type="number" min="0" step="1" class="form-control">
-                                        <small class="invalid-feedback">${getError('stock')}</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <div class="col-6">
-                                    <label for="size">Size</label>
-                                    <div>
-                                        <input name="size" id="size" v-model="newItem.size" type="number" min="0" step="1" class="form-control">
-                                        <small class="invalid-feedback">${getError('size')}</small>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <label for="unit">Unit</label>
-                                    <div>
-                                        <select name="unit" id="unit" v-model="newItem.unit" class="form-control">
-                                            <option value=""></option>
-                                            <option value="kilogram">Kilos</option>
-                                            <option value="gram">Grams</option>
-                                            <option value="liter">Liters</option>
-                                            <option value="ounce">Ounces</option>
-                                        </select>
-                                        <small class="invalid-feedback">${getError('unit')}</small>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="form-group mb-5">
-                            <label for="photo">Photo</label>
-                            <div>
-                                <img style="max-width:100%" v-if="newItem.photo" :src="newItem.photo" alt="" class="image-fluid">
-                            </div>
-                            <div class="custom-file">
-                                <input v-on:change="readFile($event, 'newItem.photo', _, ['image/jpeg', 'image/png'])" name="photo" id="photo" ref="newItemPhoto" type="file">
-                                <label class="custom-file-label" for="photo"></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-success btn-full-width">Save</button>
-                        </div>
-                    </form>
                 </div>
                 <div v-if="page=='#scan'">
                     <div class="back d-flex align-items-center mb-4">
-                        <a href="#" @click="page=0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" class="mr-3"><title>Back</title><path fill="white" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></a>
+                        <a href="#home"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" class="mr-3"><title>Back</title><path fill="white" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></a>
                         <h1 class="h6 mb-0">Cart</h1>
                     </div>
                     
