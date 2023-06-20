@@ -222,14 +222,19 @@ vApp = new Vue({
             const me = this;
 
             return me.cart.reduce((a, b) => {
-                return parseInt(a) + parseInt(b.qty)
+                let qty = (!b.qty) ? 0 : parseInt(b.qty)
+                
+                return a + qty
             }, 0)
         },
         cartTotal: function () {
             const me = this;
 
             return me.cart.reduce((a, b) => {
-                return parseFloat(a) + parseFloat(b.price) * parseInt(b.qty)
+                let price = (!b.price) ? 0.0 : parseFloat(b.price)
+                let qty = (!b.qty) ? 0 : parseInt(b.qty)
+
+                return a + price * qty
             }, 0.0)
         }
     },
