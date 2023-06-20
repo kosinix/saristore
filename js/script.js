@@ -138,6 +138,7 @@ function changeCam() {
         Quagga.start();
     });
 }
+let timerSearchTimeout = null
 vApp = new Vue({
     el: '#vApp',
     delimiters: ["${", "}"],
@@ -147,14 +148,14 @@ vApp = new Vue({
         window.vuelidateExtendMixin,
     ],
     data: {
-        page: 2,
+        page: '#home',
         pending: false,
         error: '',
 
         newItem: {
-            id: '',
             barcode: '',
             name: '',
+            cost: 0,
             price: 0,
             stock: 0,
             size: '',
@@ -165,7 +166,7 @@ vApp = new Vue({
         editedItem: {
             index: ''
         },
-
+        searchQuery: '',
         items: []
     },
     validations: {
@@ -174,21 +175,9 @@ vApp = new Vue({
     watch: {
         page: function (newPage, oldPage) {
             let me = this;
-
-            if (newPage === 0) {
-                // history.pushState({page:0},'','#home')
-            } else if (newPage === 1) {
-
-
-
-            } else if (newPage === 2) {
-                // history.pushState({page:2},'','#store')
-
-
-            } else if (newPage === 3) {
-
-
-            }
+            if (newPage === '#' || newPage === '') {
+                me.page = '#home'
+            } 
         }
     },
     mounted: function () {
@@ -199,11 +188,21 @@ vApp = new Vue({
         }).catch((err) => {
             console.error(err)
         })
-        if (window.location.hash === '#home') {
-            me.page = 0
-        }
+        me.page = window.location.hash || '#home'
     },
     methods: {
+        onSearchQueryChange: function () {
+            const me = this;
+
+            if (!timerSearchTimeout) {
+
+                timerSearchTimeout = setTimeout(function () {
+                    console.log(me.searchQuery)
+                    clearTimeout(timerSearchTimeout)
+                    timerSearchTimeout = null
+                }, 1000)
+            }
+        },
         clear: function (group) {
             for (let name in this[group]) {
                 this[group][name] = ''
@@ -285,8 +284,6 @@ vApp = new Vue({
             }).catch(err => {
                 console.error(err)
             })
-
-
         },
         editItem: function (index) {
             const me = this
@@ -295,13 +292,33 @@ vApp = new Vue({
             me.editedItem.index = index
             me.page = 3
         },
-        onSubmit: function () {
+        onPostAddItem: function () {
             const me = this;
 
+            let errors = []
+            if(!me.newItem.name){
+                errors.push('Required name.')
+            }
+            if(!me.newItem.cost){
+                errors.push('Required cost')
+            }
+            if(!me.newItem.price){
+                errors.push('Required price')
+            }
+            if(!me.newItem.stock){
+                errors.push('Required stock')
+            }
+
+            if(errors.length > 0){
+                alert('Please correct the errors:'+`${"\n    "}${errors.join("\n    ")}`)
+                return false
+            }
             me.$nextTick(function () {
-                me.items.push(JSON.parse(JSON.stringify(me.newItem)))
-                db.items.add(JSON.parse(JSON.stringify(me.newItem))).then(() => {
+                let newItem = JSON.parse(JSON.stringify(me.newItem))
+                me.items.push(newItem)
+                db.items.add(newItem).then(() => {
                     me.clear('newItem')
+                    window.location.hash = '#items'
                 }).catch(err => {
                     console.error(err)
                 })
@@ -314,7 +331,7 @@ vApp = new Vue({
                 me.$set(me.items, index, JSON.parse(JSON.stringify(me.newItem)))
 
                 db.items.update(me.newItem.id, JSON.parse(JSON.stringify(me.newItem))).then(function (updated) {
-                    if (updated){
+                    if (updated) {
                         console.log('updated')
                     } else {
 
@@ -326,3 +343,22 @@ vApp = new Vue({
         }
     }
 });
+
+window.addEventListener("hashchange", function (event) {
+    var currentPath = window.location.hash
+    if (vApp.page !== currentPath) {
+        vApp.page = currentPath
+    }
+}, false)
+
+
+// window.addEventListener('beforeunload', function (e) {
+//     var myPageIsDirty = true; //you implement this logic...
+//     if (myPageIsDirty) {
+//         //following two lines will cause the browser to ask the user if they
+//         //want to leave. The text of this dialog is controlled by the browser.
+//         e.preventDefault(); //per the standard
+//         e.returnValue = ''; //required for Chrome
+//     }
+//     //else: user is allowed to leave without a warning dialog
+// });
