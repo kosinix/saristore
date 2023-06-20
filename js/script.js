@@ -164,7 +164,17 @@ vApp = new Vue({
             photo: '',
         },
         editedItem: {
-            index: ''
+            index: '',
+            id: '',
+            barcode: '',
+            name: '',
+            cost: 0,
+            price: 0,
+            stock: 0,
+            size: '',
+            unit: '',
+            description: '',
+            photo: '',
         },
         searchQuery: '',
         items: []
@@ -177,6 +187,11 @@ vApp = new Vue({
             let me = this;
             if (newPage === '#' || newPage === '') {
                 me.page = '#home'
+            } 
+            if (newPage === '#editItem') {
+                if(me.editedItem.index === '' || me.editedItem.index === null || me.editedItem.index === undefined){
+                    window.location.hash = '#items'
+                }
             } 
         }
     },
@@ -288,13 +303,14 @@ vApp = new Vue({
         editItem: function (index) {
             const me = this
             let item = me.items[index]
-            me.newItem = item
+            me.editedItem = item
             me.editedItem.index = index
-            me.page = 3
+            window.location.hash = '#editItem'
         },
         onPostAddItem: function () {
             const me = this;
 
+            // Error check
             let errors = []
             if(!me.newItem.name){
                 errors.push('Required name.')
@@ -308,11 +324,11 @@ vApp = new Vue({
             if(!me.newItem.stock){
                 errors.push('Required stock')
             }
-
             if(errors.length > 0){
                 alert('Please correct the errors:'+`${"\n    "}${errors.join("\n    ")}`)
                 return false
             }
+
             me.$nextTick(function () {
                 let newItem = JSON.parse(JSON.stringify(me.newItem))
                 me.items.push(newItem)
@@ -324,20 +340,43 @@ vApp = new Vue({
                 })
             });
         },
-        onEdit: function (index) {
+        onPostEditItem: function (index) {
             const me = this;
 
-            me.$nextTick(function () {
-                me.$set(me.items, index, JSON.parse(JSON.stringify(me.newItem)))
+            // Error check
+            let errors = []
+            if(!me.editedItem.name){
+                errors.push('Required name.')
+            }
+            if(!me.editedItem.cost){
+                errors.push('Required cost')
+            }
+            if(!me.editedItem.price){
+                errors.push('Required price')
+            }
+            if(!me.editedItem.stock){
+                errors.push('Required stock')
+            }
+            if(errors.length > 0){
+                alert('Please correct the errors:'+`${"\n    "}${errors.join("\n    ")}`)
+                return false
+            }
 
-                db.items.update(me.newItem.id, JSON.parse(JSON.stringify(me.newItem))).then(function (updated) {
+            me.$nextTick(function () {
+
+                let editedItem = JSON.parse(JSON.stringify(me.editedItem))
+                me.$set(me.items, editedItem.index, editedItem)
+
+                delete editedItem.index
+
+                db.items.update(me.editedItem.id, editedItem).then(function (updated) {
                     if (updated) {
                         console.log('updated')
                     } else {
 
                     }
                     me.clear('newItem')
-                    me.page = 2
+                    me.page = '#items'
                 });
             });
         }
