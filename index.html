@@ -49,7 +49,7 @@
                         <svg class="mr-1" xmlns="http://www.w3.org/2000/svg" width="22" viewBox="0 0 24 24"><title>Add Item</title><path fill="white" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>
                         <span>Add Item</span>
                     </a>
-                    <div class="table-responsive">
+                    <div v-if="items.length > 0" class="table-responsive">
                         <table class="table table-light">
                             <tr>
                                 <th></th>
@@ -76,6 +76,7 @@
                             </tr>
                         </table>
                     </div>
+                    <div v-else class="text-center font-style-italic">No items to show.</div>
                 </div>
                 <!-- Items add -->
                 <div v-if="page=='#addItem'">
