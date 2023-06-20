@@ -415,6 +415,11 @@ vApp = new Vue({
                     me.page = '#items'
                 });
             });
+        },
+        onPostSearchItem: function(){
+            const me = this;
+
+            me.onSearchQueryChange()
         }
     }
 });

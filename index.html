@@ -15,7 +15,7 @@
 <main role="main">
     <div class="container-fluid">
         <div class="row">
-            <div id="vApp" v-cloak class="col-md-12 pt-5" style="padding-bottom:150px">
+            <div id="vApp" v-cloak class="col-md-12 pt-5" :data-pending="pending" style="padding-bottom:150px">
                 <!-- Home -->
                 <div v-if="page=='#home'" class="bottom d-flex align-items-center justify-content-center">
                     <a href="#home">
@@ -77,6 +77,7 @@
                         </table>
                     </div>
                 </div>
+                <!-- Items add -->
                 <div v-if="page=='#addItem'">
                     <div class="back d-flex align-items-center mb-4">
                         <a href="#items"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" class="mr-3"><title>Back</title><path fill="white" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></a>
@@ -159,6 +160,7 @@
                         </div>
                     </form>
                 </div>
+                <!-- Items edit -->
                 <div v-if="page=='#editItem'">
                     <div class="back d-flex align-items-center mb-4">
                         <a href="#items"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" class="mr-3"><title>Back</title><path fill="white" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></a>
@@ -240,23 +242,23 @@
                         </div>
                     </form>
                 </div>
-                <div v-if="page=='calc'">
+                <!-- Calc -->
+                <div v-if="page=='#calc'">
                     <div class="back d-flex align-items-center mb-4">
                         <a href="#home"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" class="mr-3"><title>Back</title><path fill="white" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></a>
                         <h1 class="h6 mb-0">Calculator</h1>
                     </div>
                 </div>
+                <!-- Scanner -->
                 <div v-if="page=='#scan'">
                     <div class="back d-flex align-items-center mb-4">
                         <a href="#home"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" class="mr-3"><title>Back</title><path fill="white" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg></a>
-                        <h1 class="h6 mb-0">Cart</h1>
+                        <h1 class="h6 mb-0">Search Item</h1>
                     </div>
-                    
-                    <form ref="formSearch" v-on:submit.prevent="onEdit(editedItem.index)" action="" method="POST" class="form-default">
+                    <form ref="formSearchItem" v-on:submit.prevent="onPostSearchItem()" action="" method="POST" class="form-default">
                         <div class="form-group">
-                            <label for="searchQuery">Search <em class="text-danger">*</em></label>
                             <div class="d-flex">
-                                <input name="searchQuery" id="searchQuery" v-model="searchQuery" type="text" class="form-control">
+                                <input placeholder="Search..." name="searchQuery" id="searchQuery" v-model="searchQuery" type="text" class="form-control">
                                 <button @click="onBarcode('searchQuery')" type="button" class="btn btn-light p-0 pl-2 pr-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" viewBox="0 0 24 24"><path d="M4,6H6V18H4V6M7,6H8V18H7V6M9,6H12V18H9V6M13,6H14V18H13V6M16,6H18V18H16V6M19,6H20V18H19V6M2,4V8H0V4A2,2 0 0,1 2,2H6V4H2M22,2A2,2 0 0,1 24,4V8H22V4H18V2H22M2,16V20H6V22H2A2,2 0 0,1 0,20V16H2M22,20V16H24V20A2,2 0 0,1 22,22H18V20H22Z" /></svg>
                                 </button>
@@ -267,9 +269,6 @@
                                 <img :src="item.photo" width="16" alt="">
                                 ${item.name} <em>(${item.size} ${item.unit})</em> - ${item.price|currency}
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-success btn-full-width">Search</button>
                         </div>
                     </form>
                 </div>
