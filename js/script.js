@@ -220,7 +220,7 @@ vApp = new Vue({
         })
 
         // TODO: change to home
-        me.page = window.location.hash || '#calc'
+        me.page = window.location.hash || '#home'
     },
     computed: {
         cartCount: function () {
