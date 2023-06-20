@@ -89,7 +89,15 @@ Quagga.onDetected(function (result) {
     code = code + ''
     if (candidates[code]) {
         if (candidates[code] >= threshold) {
-            vApp.newItem.barcode = code // vue
+            // Send to vue
+            let [path1, path2] = vApp.barcodeRecipient.split('.')
+            if(path1 && path2){
+                vApp[path1][path2] = code
+            } else if (path1){
+                vApp[path1] = code
+            }
+
+            //
             Quagga.stop()
 
             var drawingCtx = Quagga.canvas.ctx.overlay
@@ -151,7 +159,7 @@ vApp = new Vue({
         page: '#home',
         pending: false,
         error: '',
-
+        barcodeRecipient: 'newItem.barcode',
         newItem: {
             barcode: '',
             name: '',
@@ -185,7 +193,7 @@ vApp = new Vue({
     },
     watch: {
         page: function (newPage, oldPage) {
-            let me = this;
+            const me = this;
             if (newPage === '#' || newPage === '') {
                 me.page = '#home'
             } 
@@ -194,7 +202,13 @@ vApp = new Vue({
                     window.location.hash = '#items'
                 }
             } 
-        }
+        },
+        searchQuery: function (newVal, oldVal) {
+            const me = this;
+            if(newVal !== oldVal){
+                me.onSearchQueryChange()
+            }
+        },
     },
     mounted: function () {
         const me = this
@@ -222,14 +236,14 @@ vApp = new Vue({
 
             if(!isNaN(s.slice(0, 6))){
                 db.items.where('barcode').startsWithAnyOfIgnoreCase(s).toArray().then((items) => {
-                    console.log(items)
+                    // console.log(items)
                     me.searchResults = items
                 }).catch((err) => {
                     console.error(err)
                 })
             } else {
                 db.items.where('name').startsWithAnyOfIgnoreCase(s).toArray().then((items) => {
-                    console.log(items)
+                    // console.log(items)
                     me.searchResults = items
                 }).catch((err) => {
                     console.error(err)
@@ -251,7 +265,8 @@ vApp = new Vue({
                 w.document.write(image.outerHTML);
             }, 0);
         },
-        onBarcode: function () {
+        onBarcode: function (barcodeRecipient) {
+            const me = this
             Quagga.init(config, function (err) {
                 if (err) {
                     console.error(err);
@@ -259,6 +274,7 @@ vApp = new Vue({
                     return;
                 }
                 Quagga.start();
+                me.barcodeRecipient = barcodeRecipient
                 jQuery('#modal-scan').modal('show')
             });
         },
