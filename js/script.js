@@ -177,6 +177,7 @@ vApp = new Vue({
             photo: '',
         },
         searchQuery: '',
+        searchResults: [],
         items: []
     },
     validations: {
@@ -208,15 +209,34 @@ vApp = new Vue({
     methods: {
         onSearchQueryChange: function () {
             const me = this;
-
             if (!timerSearchTimeout) {
-
                 timerSearchTimeout = setTimeout(function () {
-                    console.log(me.searchQuery)
+                    me.search(me.searchQuery)
                     clearTimeout(timerSearchTimeout)
                     timerSearchTimeout = null
                 }, 1000)
             }
+        },
+        search: function(s){
+            const me = this;
+
+            if(!isNaN(s.slice(0, 6))){
+                db.items.where('barcode').startsWithAnyOfIgnoreCase(s).toArray().then((items) => {
+                    console.log(items)
+                    me.searchResults = items
+                }).catch((err) => {
+                    console.error(err)
+                })
+            } else {
+                db.items.where('name').startsWithAnyOfIgnoreCase(s).toArray().then((items) => {
+                    console.log(items)
+                    me.searchResults = items
+                }).catch((err) => {
+                    console.error(err)
+                })
+            }
+            
+            
         },
         clear: function (group) {
             for (let name in this[group]) {

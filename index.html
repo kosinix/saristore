@@ -85,7 +85,7 @@
                     
                     <form ref="formAddItem" v-on:submit.prevent="onPostAddItem" action="" method="POST" class="form-default">
                         <div class="form-group">
-                            <label for="barcode">Barcode <em class="text-danger">*</em></label>
+                            <label for="barcode">Barcode</label>
                             <div class="d-flex">
                                 <input name="barcode" id="barcode" v-model="newItem.barcode" type="text" class="form-control">
                                 <button @click="onBarcode" type="button" class="btn btn-light p-0 pl-2 pr-2">
@@ -167,7 +167,7 @@
                     
                     <form ref="formEditItem" v-on:submit.prevent="onPostEditItem(editedItem.index)" action="" method="POST" class="form-default">
                         <div class="form-group">
-                            <label for="barcode">Barcode <em class="text-danger">*</em></label>
+                            <label for="barcode">Barcode</label>
                             <div class="d-flex">
                                 <input name="barcode" id="barcode" v-model="editedItem.barcode" type="text" class="form-control">
                                 <button @click="onBarcode" type="button" class="btn btn-light p-0 pl-2 pr-2">
@@ -339,10 +339,10 @@
                             </div>
                         </div>
                         <div class="p-1 mb-4">
-                            <div>Adaptor 34</div>
-                            <div>sdsadsad</div>
-                            <div>sdsadsad</div>
-                            <div>sdsadsad</div>
+                            <div v-for="item in searchResults">
+                                <img :src="item.photo" width="16" alt="">
+                                ${item.name} <em>(${item.size} ${item.unit})</em> - ${item.price|currency}
+                            </div>
                         </div>
                         <div class="form-group">
                             <button class="btn btn-success btn-full-width">Search</button>
