@@ -264,10 +264,43 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="p-1 mb-4">
-                            <div v-for="item in searchResults">
-                                <img :src="item.photo" width="16" alt="">
-                                ${item.name} <em>(${item.size} ${item.unit})</em> - ${item.price|currency}
+                        <div class="p-1 mb-3">
+                            <div v-for="item in searchResults" class="d-flex justify-content-between align-items-center mb-1">
+                                <div class="d-flex mr-1">
+                                    <img :src="item.photo" width="22" alt="">
+                                    <span class="ml-1">${item.name} <em>(${item.size} ${item.unit})</em> | ${item.price|currency} | ${item.stock} stocks</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <button type="button" @click.prevent="addToCart(item.id)" class="btn btn-sm btn-success align-items-center d-flex justify-content-center p-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" viewBox="0 0 24 24"><title>Add Item</title><path fill="white" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-1" v-if="cart.length > 0">
+                            <div class="row" v-for="(item, index) in cart">
+                                <div class="col-3" style="height:60px; overflow: hidden; position: relative;">
+                                    <img :src="item.photo" width="60" height="auto" alt="" style="translate: 0 -50%; position: relative; top:50%;">
+                                </div>
+                                <span class="col-3">${item.name}</span>
+                                <div class="col-2 text-center">
+                                    <input class="form-control" type="number" min="1" step="1" v-model="item.qty">
+                                </div>
+                                <div class="col-2 text-right">
+                                    ${item.price|currency}
+                                </div>
+                                <div class="col-2 text-right">
+                                    <button type="button" class="btn btn-sm btn-danger p-0">
+                                        <svg @click="deleteCartItem(index)" xmlns="http://www.w3.org/2000/svg" width="22" viewBox="0 0 24 24"><title>X</title><path fill="white" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3"></div>
+                                <div class="col-3"></div>
+                                <div class="col-2 text-center">Qty: ${cartCount}</div>
+                                <div class="col-2 text-right">${cartTotal|currency}</div>
+                                <div class="col-2 text-left">Total</div>
                             </div>
                         </div>
                     </form>

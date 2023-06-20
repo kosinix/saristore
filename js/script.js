@@ -91,9 +91,9 @@ Quagga.onDetected(function (result) {
         if (candidates[code] >= threshold) {
             // Send to vue
             let [path1, path2] = vApp.barcodeRecipient.split('.')
-            if(path1 && path2){
+            if (path1 && path2) {
                 vApp[path1][path2] = code
-            } else if (path1){
+            } else if (path1) {
                 vApp[path1] = code
             }
 
@@ -152,8 +152,6 @@ vApp = new Vue({
     delimiters: ["${", "}"],
     mixins: [
         window.vueFiltersMixin,
-        window.vuelidate.validationMixin,
-        window.vuelidateExtendMixin,
     ],
     data: {
         page: '#home',
@@ -186,41 +184,84 @@ vApp = new Vue({
         },
         searchQuery: '',
         searchResults: [],
+        cart: [],
         items: []
-    },
-    validations: {
-
     },
     watch: {
         page: function (newPage, oldPage) {
             const me = this;
             if (newPage === '#' || newPage === '') {
                 me.page = '#home'
-            } 
+            }
             if (newPage === '#editItem') {
-                if(me.editedItem.index === '' || me.editedItem.index === null || me.editedItem.index === undefined){
+                if (me.editedItem.index === '' || me.editedItem.index === null || me.editedItem.index === undefined) {
                     window.location.hash = '#items'
                 }
-            } 
+            }
         },
         searchQuery: function (newVal, oldVal) {
             const me = this;
-            if(newVal !== oldVal){
+            if (newVal !== oldVal) {
                 me.onSearchQueryChange()
             }
         },
     },
     mounted: function () {
         const me = this
-
         db.items.toArray().then((items) => {
             me.items = items || []
         }).catch((err) => {
             console.error(err)
         })
-        me.page = window.location.hash || '#home'
+
+        // TODO: change to home
+        me.page = window.location.hash || '#scan'
+    },
+    computed: {
+        cartCount: function () {
+            const me = this;
+
+            return me.cart.reduce((a, b) => {
+                return parseInt(a) + parseInt(b.qty)
+            }, 0)
+        },
+        cartTotal: function () {
+            const me = this;
+
+            return me.cart.reduce((a, b) => {
+                return parseFloat(a) + parseFloat(b.price) * parseInt(b.qty)
+            }, 0.0)
+        }
     },
     methods: {
+        addToCart: function (id) {
+            const me = this;
+
+            let existing = me.cart.findIndex(o => {
+                return o.id === id
+            })
+
+            if (existing !== -1) {
+                me.cart[existing].qty++
+            } else {
+                db.items.get(id).then((item) => {
+                    // console.log(items)
+                    me.cart.push({
+                        id: item.id,
+                        name: item.name,
+                        photo: item.photo,
+                        price: item.price,
+                        qty: 1,
+                    })
+                }).catch((err) => {
+                    console.error(err)
+                })
+            }
+        },
+        deleteCartItem: function(index) {
+            const me = this
+            me.$delete(me.cart, index)
+        },
         onSearchQueryChange: function () {
             const me = this;
             if (!timerSearchTimeout) {
@@ -231,10 +272,12 @@ vApp = new Vue({
                 }, 1000)
             }
         },
-        search: function(s){
+        search: function (s) {
             const me = this;
 
-            if(!isNaN(s.slice(0, 6))){
+            if (!s) return
+
+            if (!isNaN(s.slice(0, 6))) {
                 db.items.where('barcode').startsWithAnyOfIgnoreCase(s).limit(10).toArray().then((items) => {
                     // console.log(items)
                     me.searchResults = items
@@ -249,8 +292,8 @@ vApp = new Vue({
                     console.error(err)
                 })
             }
-            
-            
+
+
         },
         clear: function (group) {
             for (let name in this[group]) {
@@ -348,20 +391,20 @@ vApp = new Vue({
 
             // Error check
             let errors = []
-            if(!me.newItem.name){
+            if (!me.newItem.name) {
                 errors.push('Required name.')
             }
-            if(!me.newItem.cost){
+            if (!me.newItem.cost) {
                 errors.push('Required cost')
             }
-            if(!me.newItem.price){
+            if (!me.newItem.price) {
                 errors.push('Required price')
             }
-            if(!me.newItem.stock){
+            if (!me.newItem.stock) {
                 errors.push('Required stock')
             }
-            if(errors.length > 0){
-                alert('Please correct the errors:'+`${"\n    "}${errors.join("\n    ")}`)
+            if (errors.length > 0) {
+                alert('Please correct the errors:' + `${"\n    "}${errors.join("\n    ")}`)
                 return false
             }
 
@@ -381,20 +424,20 @@ vApp = new Vue({
 
             // Error check
             let errors = []
-            if(!me.editedItem.name){
+            if (!me.editedItem.name) {
                 errors.push('Required name.')
             }
-            if(!me.editedItem.cost){
+            if (!me.editedItem.cost) {
                 errors.push('Required cost')
             }
-            if(!me.editedItem.price){
+            if (!me.editedItem.price) {
                 errors.push('Required price')
             }
-            if(!me.editedItem.stock){
+            if (!me.editedItem.stock) {
                 errors.push('Required stock')
             }
-            if(errors.length > 0){
-                alert('Please correct the errors:'+`${"\n    "}${errors.join("\n    ")}`)
+            if (errors.length > 0) {
+                alert('Please correct the errors:' + `${"\n    "}${errors.join("\n    ")}`)
                 return false
             }
 
@@ -416,7 +459,7 @@ vApp = new Vue({
                 });
             });
         },
-        onPostSearchItem: function(){
+        onPostSearchItem: function () {
             const me = this;
 
             me.onSearchQueryChange()
