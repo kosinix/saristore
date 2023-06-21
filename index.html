@@ -136,10 +136,7 @@
                                     <div>
                                         <select name="unit" id="unit" v-model="newItem.unit" class="form-control">
                                             <option value=""></option>
-                                            <option value="kilogram">Kilos</option>
-                                            <option value="gram">Grams</option>
-                                            <option value="liter">Liters</option>
-                                            <option value="ounce">Ounces</option>
+                                            <option v-for="o in lists.units" :value="o.value">${o.name}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -219,10 +216,7 @@
                                     <div>
                                         <select name="unit" id="unit" v-model="editedItem.unit" class="form-control">
                                             <option value=""></option>
-                                            <option value="kilogram">Kilos</option>
-                                            <option value="gram">Grams</option>
-                                            <option value="liter">Liters</option>
-                                            <option value="ounce">Ounces</option>
+                                            <option v-for="o in lists.units" :value="o.value">${o.name}</option>
                                         </select>
                                     </div>
                                 </div>

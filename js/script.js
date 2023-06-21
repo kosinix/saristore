@@ -189,7 +189,32 @@ vApp = new Vue({
         calculator: {
             x1: null,
             display: '',
-            op:''
+            op: ''
+        },
+        lists: {
+            units: [
+                {
+                    value: 'milligram',
+                    name: 'Milligrams'
+                },
+                
+                {
+                    value: 'gram',
+                    name: 'Grams'
+                },
+                {
+                    value: 'kilogram',
+                    name: 'Kilos'
+                },
+                {
+                    value: 'liter',
+                    name: 'Liters'
+                },
+                {
+                    value: 'ounce',
+                    name: 'Ounces'
+                }
+            ]
         }
     },
     watch: {
@@ -328,8 +353,6 @@ vApp = new Vue({
                     console.error(err)
                 })
             }
-
-
         },
         clear: function (group) {
             for (let name in this[group]) {
