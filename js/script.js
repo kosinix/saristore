@@ -339,12 +339,28 @@ vApp = new Vue({
             if (!s) return
 
             if (!isNaN(s.slice(0, 6))) {
-                db.items.where('barcode').startsWithAnyOfIgnoreCase(s).limit(10).toArray().then((items) => {
-                    // console.log(items)
-                    me.searchResults = items
+                // Find exact barcode
+                db.items.get({
+                    'barcode': s
+                }).then((item) => {
+                    // Found exact match
+                    if(item){
+                        me.addToCart(item.id)
+                        // Clear searchbox
+                        me.searchQuery = ''
+                    } else { // Else possible matches
+                        db.items.where('barcode').startsWithAnyOfIgnoreCase(s).limit(10).toArray().then((items) => {
+                            // console.log(items)
+                            me.searchResults = items
+                        }).catch((err) => {
+                            console.error(err)
+                        })
+                    }
                 }).catch((err) => {
                     console.error(err)
                 })
+
+                
             } else {
                 db.items.where('name').startsWithAnyOfIgnoreCase(s).limit(10).toArray().then((items) => {
                     // console.log(items)
