@@ -695,7 +695,7 @@ body {
     width: 100%;
     text-align: center;
     background: #ccc;
-    box-shadow: 0 -1 5px #ccc;
+    box-shadow: 0 -2px 8px #fff6f1;
 }
 
 .bottom > a {
