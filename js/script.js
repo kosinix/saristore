@@ -7,6 +7,15 @@ db.open().catch(function (e) {
     console.error("Open failed: " + e.stack);
 })
 
+let stage = new Konva.Stage({
+    container: 'konvass',
+    width: 600,
+    height: 600,
+});
+
+let layer = new Konva.Layer();
+stage.add(layer);
+
 function resizeDimensions(width, height, newWidth, newHeight) {
     let ratio = width / height
 
@@ -432,7 +441,39 @@ vApp = new Vue({
                             let mime = base64Data.split(';')[0].replace('data:', '')
                             if (!mime) throw new Error('Not a valid photo.')
                             if (['image/jpeg', 'image/png'].includes(mime)) {
-                                lodash.set(me, propPath, base64Data) // data URL base64 encoded
+
+                                let blank = new Image(); // Hold uploaded file
+                                blank.onload = function (e) {
+                                    const thisImage = this;
+                                    const targetWidth = 600;
+                                    const targetHeight = 600;
+                                    let { resizeWidth, resizeHeight } = resizeDimensions(thisImage.width, thisImage.height, targetWidth, targetHeight)
+
+                                    // console.log(thisImage.width, thisImage.height)
+
+                                    let resizeX = 0
+                                    let resizeY = 0
+                                    if (resizeWidth > targetWidth) {
+                                        resizeX = Math.round((targetWidth - resizeWidth) / 2)
+                                    }
+                                    if (resizeHeight > targetHeight) {
+                                        resizeY = Math.round((targetHeight - resizeHeight) / 2)
+                                    }
+
+                                    // console.log(resizeX, resizeY, resizeWidth, resizeHeight)
+
+                                    let gamay = new Konva.Image({
+                                        image: blank,
+                                        x: resizeX,
+                                        y: resizeY,
+                                        width: resizeWidth,
+                                        height: resizeHeight,
+                                    });
+                                    layer.add(gamay);
+                                    lodash.set(me, propPath, stage.toDataURL()) // data URL base64 encoded
+
+                                }
+                                blank.src = base64Data; // data URL base64 encoded
                             } else {
                                 throw new Error('File type not allowed.')
                             }
