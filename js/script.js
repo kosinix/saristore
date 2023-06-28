@@ -35,6 +35,7 @@ function resizeDimensions(width, height, newWidth, newHeight) {
 }
 
 let vApp = undefined
+let vModalAmount = undefined
 var config = {
     inputStream: {
         type: "LiveStream",
@@ -193,8 +194,11 @@ vApp = new Vue({
         },
         searchQuery: '',
         searchResults: [],
-        cart: [],
+        cart: [
+            {"id":3,"name":"Head and Shoulders","photo":"",qty:1,price:"800"}
+        ],
         items: [],
+        cashPayAmount: 0,
         calculator: {
             x1: null,
             display: '',
@@ -244,6 +248,12 @@ vApp = new Vue({
                 me.onSearchQueryChange()
             }
         },
+        cashPayAmount: function (newVal, oldVal) {
+            const me = this;
+            if (!newVal) {
+                me.cashPayAmount = 0
+            }
+        },
     },
     mounted: function () {
         const me = this
@@ -275,9 +285,22 @@ vApp = new Vue({
 
                 return a + price * qty
             }, 0.0)
+        },
+        transactionChange: function () {
+            const me = this;
+
+            let change = me.cashPayAmount - me.cartTotal
+            if(change < 0){
+                return 0
+            }
+            return change
         }
     },
     methods: {
+        addToPay: function (amount) {
+            const me = this;
+            me.cashPayAmount += parseFloat(amount)
+        },
         calc: function (val, op) {
             const me = this;
 
@@ -339,7 +362,7 @@ vApp = new Vue({
                     me.search(me.searchQuery)
                     clearTimeout(timerSearchTimeout)
                     timerSearchTimeout = null
-                }, 1000)
+                }, 600)
             }
         },
         search: function (s) {
@@ -404,6 +427,11 @@ vApp = new Vue({
                 me.barcodeRecipient = barcodeRecipient
                 jQuery('#modal-scan').modal('show')
             });
+        },
+        onAmountModal: function (recipient) {
+            const me = this
+           
+            jQuery('#modal-amount').modal('show')
         },
         readFile: function (event, propPath, lodash, accept) {
             const me = this;
@@ -582,7 +610,27 @@ vApp = new Vue({
         }
     }
 });
+vModalAmount = new Vue({
+    el: '#modal-amount',
+    delimiters: ["${", "}"],
+    mixins: [
+        window.vueFiltersMixin,
+    ],
+    data: {
+        cashPayAmount: 0
+    },
+    methods: {
+        addToPay: function (amount) {
+            const me = this;
+            me.cashPayAmount += parseFloat(amount)
+        },
+        sendIt: function(){
+            vApp.cashPayAmount = this.cashPayAmount
+            jQuery('#modal-amount').modal('hide')
 
+        }
+    }
+})
 window.addEventListener("hashchange", function (event) {
     var currentPath = window.location.hash
     if (vApp.page !== currentPath) {

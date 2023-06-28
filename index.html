@@ -304,15 +304,22 @@
                             </div>
                         </div>
                         <div class="p-1" v-if="cart.length > 0">
-                            <div class="row" v-for="(item, index) in cart">
-                                <div class="col-3" style="height:60px; overflow: hidden; position: relative;">
+                            <div class="form-row mb-3 font-weight-bold">
+                                <div class="col-2"></div>
+                                <div class="col-3">Item</div>
+                                <div class="col-2 text-center">Quantity</div>
+                                <div class="col-3 text-right">Price</div>
+                                <div class="col-2 text-left"></div>
+                            </div>
+                            <div class="form-row" v-for="(item, index) in cart">
+                                <div class="col-2" style="height:60px; overflow: hidden; position: relative;">
                                     <img :src="item.photo" width="60" height="auto" alt="" style="translate: 0 -50%; position: relative; top:50%;">
                                 </div>
                                 <span class="col-3">${item.name}</span>
                                 <div class="col-2 text-center">
                                     <input class="form-control" type="number" min="1" step="1" v-model="item.qty">
                                 </div>
-                                <div class="col-2 text-right">
+                                <div class="col-3 text-right">
                                     ${item.price|currency}
                                 </div>
                                 <div class="col-2 text-right">
@@ -321,12 +328,28 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="form-row mb-3 font-weight-bold text-success">
+                                <div class="col-2"></div>
                                 <div class="col-3"></div>
-                                <div class="col-3"></div>
-                                <div class="col-2 text-center">Qty: ${cartCount}</div>
-                                <div class="col-2 text-right">${cartTotal|currency}</div>
+                                <div class="col-2 text-center">${cartCount}</div>
+                                <div class="col-3 text-right">${cartTotal|currency}</div>
                                 <div class="col-2 text-left">Total</div>
+                            </div>
+                            <div class="form-row mb-3 font-weight-bold text-warning">
+                                <div class="col-5">
+                                </div>
+                                <div class="col-2">
+                                </div>
+                                <div class="col-3 text-right"><button @click="onAmountModal" class="btn btn-sm btn-warning" type="button">${cashPayAmount|currency}</button></div>
+                                <div class="col-2 text-left">Pay<span class="d-md-inline d-none">ment</span></div>
+                            </div>
+                            
+                            <div class="form-row mb-3 font-weight-bold text-danger">
+                                <div class="col-2"></div>
+                                <div class="col-3"></div>
+                                <div class="col-2 text-center"></div>
+                                <div class="col-3 text-right">${transactionChange|currency}</div>
+                                <div class="col-2 text-left">Change</div>
                             </div>
                         </div>
                     </form>
@@ -353,6 +376,30 @@
                             <button type="button" class="btn btn-light position-relative" onclick="changeCam()" style="z-index: 1">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" viewBox="0 0 24 24"><title>Switch Cam</title><path fill="gray" d="M12 7C6.5 7 2 9.2 2 12C2 14.2 4.9 16.1 9 16.8V20L13 16L9 12V14.7C5.8 14.1 4 12.8 4 12C4 10.9 7 9 12 9S20 10.9 20 12C20 12.7 18.5 13.9 16 14.5V16.6C19.5 15.8 22 14.1 22 12C22 9.2 17.5 7 12 7Z" /></svg>
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="modal-amount" data-backdrop="static" class="modal " tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-dark">Set Amount</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <div class="form-row align-items-center">
+                                <div class="col-12 d-flex align-items-center justify-content-start flex-grow flex-wrap">
+                                    <button v-for="amt in [1, 5,10,20,50,100,500,1000]" @click="addToPay(amt)" class="ml-1 mb-1 btn-warning" type="button">${amt}</button>
+                               
+                                    <input class="ml-1 mb-1 btn-light" type="search" v-model="cashPayAmount">
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button @click="sendIt" type="button" class=" btn-success">OKAY</button>
+                            </div>
                         </div>
                     </div>
                 </div>
