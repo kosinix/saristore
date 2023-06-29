@@ -195,7 +195,6 @@ vApp = new Vue({
         searchQuery: '',
         searchResults: [],
         cart: [
-            {"id":3,"name":"Head and Shoulders","photo":"",qty:1,price:"800"}
         ],
         items: [],
         cashPayAmount: 0,
