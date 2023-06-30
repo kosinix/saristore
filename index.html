@@ -317,7 +317,7 @@
                                 </div>
                                 <span class="col-3">${item.name}</span>
                                 <div class="col-2 text-center">
-                                    <input class="form-control" type="number" min="1" step="1" v-model="item.qty">
+                                    <input class="form-control text-center" type="number" min="1" step="1" v-model="item.qty">
                                 </div>
                                 <div class="col-3 text-right">
                                     ${item.price|currency}
@@ -344,12 +344,16 @@
                                 <div class="col-2 text-left">Pay<span class="d-md-inline d-none">ment</span></div>
                             </div>
                             
-                            <div class="form-row mb-3 font-weight-bold text-danger">
+                            <div :class=" `form-row mb-3 font-weight-bold `+ ((transactionChange < 0) ? `text-danger`:``)">
                                 <div class="col-2"></div>
                                 <div class="col-3"></div>
                                 <div class="col-2 text-center"></div>
                                 <div class="col-3 text-right">${transactionChange|currency}</div>
                                 <div class="col-2 text-left">Change</div>
+                            </div>
+                            <div>
+                                <button @click="onAmountModal" class="btn btn-success" type="button">Sold</button>
+                                <button @click="onAmountModal" class="btn btn-danger" v-if="transactionChange < 0" type="button">Utang</button>
                             </div>
                         </div>
                     </form>

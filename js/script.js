@@ -289,9 +289,9 @@ vApp = new Vue({
             const me = this;
 
             let change = me.cashPayAmount - me.cartTotal
-            if(change < 0){
-                return 0
-            }
+            // if(change < 0){
+            //     return 0
+            // }
             return change
         }
     },
@@ -617,6 +617,14 @@ vModalAmount = new Vue({
     ],
     data: {
         cashPayAmount: 0
+    },
+    watch: {
+        cashPayAmount: function (newVal, oldVal) {
+            const me = this;
+            if (!newVal) {
+                me.cashPayAmount = 0
+            }
+        },
     },
     methods: {
         addToPay: function (amount) {
